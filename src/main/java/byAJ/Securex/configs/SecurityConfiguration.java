@@ -18,8 +18,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .authorizeRequests().antMatchers("/", "/books/list").permitAll()
-        .anyRequest().authenticated()
+                .authorizeRequests().antMatchers("/", "/books/list","/css/**").permitAll()
+                .antMatchers("/books/edit/**").hasRole("ADMIN")
+                       .anyRequest().authenticated()
                 .and()
                 .formLogin()
                 .loginPage("/login")
@@ -27,13 +28,16 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
                 .and()
                 .logout()
                 .permitAll()
-            .and()
-        ;
+                .and()
+                .httpBasic();
+
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.inMemoryAuthentication().withUser("user").password("password").roles("USER").and().
-                withUser("root").password("password2").roles("ADMIN");
+                withUser("root").password("password2").roles("ADMIN").and().
+                withUser("Dave").password("begreat").roles("ADMIN").and().
+        withUser("Fi").password("becold").roles("ADMIN");
     }
 }
